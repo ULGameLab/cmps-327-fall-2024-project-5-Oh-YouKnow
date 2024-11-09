@@ -48,4 +48,8 @@ public class Tile : MonoBehaviour
     {
         return "( " + indexX + ", " + indexY + " )";
     }
+
+    public bool equals(Tile tile2) {
+        return (indexX == tile2.indexX && indexY == tile2.indexY);
+    }
 }

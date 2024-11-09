@@ -18,6 +18,7 @@ public class Node
         costSoFar = _costSoFar;
         tile = _tile;
     }
+
 }
 
 public class PathFinder
@@ -58,7 +59,20 @@ public class PathFinder
             // You just need to fill code inside this foreach only
             foreach (Tile nextTile in current.tile.Adjacents)
             {
-                
+                bool skip = false;
+                foreach (Node t in DoneList) {
+                    if(t.tile.equals(nextTile)) skip = true;
+
+                }
+                foreach (Node t in TODOList) {
+                    if (t.tile.equals(nextTile)) skip = true;
+                }
+                if (skip) continue;
+                double g = current.costSoFar + 10;
+                if (HeuristicsDistance(nextTile, current.tile) > 10) g += 4;
+                double h = HeuristicsDistance(nextTile, goalTile);
+                Node NewTile = new Node(nextTile, g + h, current, g);
+                TODOList.Add(NewTile);
             }
         }
         return new Queue<Tile>(); // Returns an empty Path if no path is found
@@ -92,7 +106,31 @@ public class PathFinder
             // Just increase the F cost of the enemy tile and the tiles around it by a certain ammount (say 30)
             foreach (Tile nextTile in current.tile.Adjacents)
             {
+                bool skip = false;
+                foreach (Node t in DoneList) {
+                    if (t.tile.equals(nextTile)) skip = true;
 
+                }
+                foreach (Node t in TODOList) {
+                    if (t.tile.equals(nextTile)) skip = true;
+                }
+                if (skip) continue;
+                List<Enemy> enemyList = new List<Enemy>((Enemy[])GameObject.FindObjectsByType(typeof(Enemy), FindObjectsSortMode.None));
+
+                double g = current.costSoFar + 10;
+                if (HeuristicsDistance(nextTile, current.tile) > 10) g += 4;
+                double h = HeuristicsDistance(nextTile, goalTile);
+                double enemyTax = 0;
+                foreach (Enemy enemy in enemyList) {
+                    if(HeuristicsDistance(nextTile, enemy.currentTile) <= 20) {
+                        enemyTax += 80;
+                    }
+                    if (HeuristicsDistance(nextTile, enemy.currentTile) == 0) {
+                        enemyTax += 20;
+                    }
+                }
+                Node NewTile = new Node(nextTile, g + h + enemyTax, current, g);
+                TODOList.Add(NewTile);
             }
         }
         return new Queue<Tile>(); // Returns an empty Path

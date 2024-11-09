@@ -487,7 +487,7 @@ MonoBehaviour:
   mapGenerator: {fileID: 614508719}
   currentTile: {fileID: 0}
   velocity: {x: 0, y: 0, z: 0}
-  speed: 1
+  speed: 1.5
   visionDistance: 5
   maxCounter: 5
   behavior: 2
@@ -1111,7 +1111,7 @@ MonoBehaviour:
   mapGenerator: {fileID: 614508719}
   currentTile: {fileID: 0}
   velocity: {x: 0, y: 0, z: 0}
-  speed: 1
+  speed: 1.5
   visionDistance: 5
   maxCounter: 5
   behavior: 0
@@ -1240,8 +1240,8 @@ MonoBehaviour:
   mapGenerator: {fileID: 614508719}
   currentTile: {fileID: 0}
   velocity: {x: 0, y: 0, z: 0}
-  speed: 1
-  visionDistance: 4
+  speed: 1.5
+  visionDistance: 5
   maxCounter: 4
   behavior: 1
 --- !u!1 &1569744440

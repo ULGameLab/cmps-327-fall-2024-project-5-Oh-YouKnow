@@ -21,7 +21,7 @@ public class Enemy : MonoBehaviour
 
     //properties
     public float speed = 1.0f;
-    public float visionDistance = 5;
+    public float visionDistance = 500;
     public int maxCounter = 5;
     protected int playerCloseCounter;
 
@@ -131,12 +131,113 @@ public class Enemy : MonoBehaviour
     // TODO: Enemy chases the player when it is nearby
     private void HandleEnemyBehavior2()
     {
-        
+        switch (state) {
+            case EnemyState.DEFAULT: // generate random path 
+
+                //Changed the color to red to differentiate from other enemies
+                material.color = Color.red;
+
+                if (Vector3.Distance(transform.position, playerGameObject.transform.position) < visionDistance) {
+                    state = EnemyState.CHASE;
+                    break;
+                }
+
+                if (path.Count <= 0) {
+                    
+                    path = pathFinder.RandomPath(currentTile, 20); 
+                
+                }
+
+                if (path.Count > 0) {
+                    targetTile = path.Dequeue();
+                    state = EnemyState.MOVING;
+                }
+                break;
+
+            case EnemyState.MOVING:
+                //move
+                velocity = targetTile.gameObject.transform.position - transform.position;
+                transform.position = transform.position + (velocity.normalized * speed) * Time.deltaTime;
+
+                //if target reached
+                
+                if (Vector3.Distance(transform.position, targetTile.gameObject.transform.position) <= 0.05f) {
+                    currentTile = targetTile;
+                    state = EnemyState.DEFAULT;
+                }
+
+                break;
+            case EnemyState.CHASE:
+                path.Clear();
+                path = pathFinder.FindPathAStar(currentTile, playerGameObject.GetComponent<Player>().currentTile);
+
+                if (path.Count > 0) {
+                    targetTile = path.Dequeue();
+                    state = EnemyState.MOVING;
+                }
+                break;
+            default:
+                state = EnemyState.DEFAULT;
+                break;
+        }
     }
 
     // TODO: Third behavior (Describe what it does)
     private void HandleEnemyBehavior3()
     {
+        switch (state) {
+            case EnemyState.DEFAULT: // generate random path 
 
+                //Changed the color to purple to differentiate from other enemies
+                material.color = Color.magenta;
+
+                if (Vector3.Distance(transform.position, playerGameObject.transform.position) < visionDistance) {
+                    state = EnemyState.CHASE;
+                    break;
+                }
+
+                if (path.Count <= 0) path = pathFinder.RandomPath(currentTile, 20);
+
+                if (path.Count > 0) {
+                    targetTile = path.Dequeue();
+                    state = EnemyState.MOVING;
+                }
+                break;
+
+            case EnemyState.MOVING:
+                //move
+                velocity = targetTile.gameObject.transform.position - transform.position;
+                transform.position = transform.position + (velocity.normalized * speed) * Time.deltaTime;
+
+                //if target reached
+                
+                if (Vector3.Distance(transform.position, targetTile.gameObject.transform.position) <= 0.05f) {
+                    currentTile = targetTile;
+                    state = EnemyState.DEFAULT;
+                }
+  
+
+                break;
+            case EnemyState.CHASE:
+                path.Clear();
+                path = pathFinder.RandomPath(playerGameObject.GetComponent<Player>().currentTile, 2);
+                while (true){
+                    if (path.Count > 1) {
+                        path.Dequeue();
+                    }
+                    else break;
+                }
+                Tile destTile = path.Dequeue();
+                path = pathFinder.FindPathAStar(currentTile, destTile);
+
+                if (path.Count > 0) {
+                    targetTile = path.Dequeue();
+                    state = EnemyState.MOVING;
+                }
+                break;
+            default:
+                state = EnemyState.DEFAULT;
+                break;
+        }
     }
 }
